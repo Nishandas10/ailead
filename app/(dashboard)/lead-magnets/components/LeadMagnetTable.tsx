@@ -71,5 +71,3 @@ function LeadMagnetTable({ leadMagnets, leads }: LeadMagnetTableProps) {
 }
 
 export default LeadMagnetTable;
-
-// 1:09:39
