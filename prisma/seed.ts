@@ -20,7 +20,7 @@ const seed = async () => {
       publishedSubtitle: "This is a published subtitle",
       publishedTitle: "This is a published title",
       slug: "lead-magnet-slug",
-      status: "draft",
+      status: "published",
       userId: "user_2bueuBH9aFjQhEvfDNTNozK6f5h",
     },
   });
