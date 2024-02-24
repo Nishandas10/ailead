@@ -2,110 +2,97 @@ import { currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { leadMagnetCreateRequest, leadMagnetUpdateRequest } from "./schema";
 import { prismadb } from "@/lib/prismadb";
+import { z } from "zod";
 
-// export async function POST(request: Request){
-//     try{
-//     //Grab our authentication state from clerk
-//     // const user = await currentUser();
+async function handleRequest(
+  request: Request,
+  schema: z.ZodType<any, any>,
+  isUpdate = false
+) {
+  const user = await currentUser();
 
-//     // console.log("user",user);
-//     // if(!user?.id){
-//     //     return NextResponse.json({message: "Unauthenticated"} , {status: 401});
-//     // }
+  if (!user || !user.id) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
 
-//     const userId = "user_2bueuBH9aFjQhEvfDNTNozK6f5h";
+  const userId = user.id;
 
-//     // Parsing and validating our data
-//     const requestData = await request.json();
-//     const parsed = leadMagnetCreateRequest.safeParse(requestData);
+  const requestBody = await request.json();
+  const parsed = schema.safeParse(requestBody);
 
-//     if(!parsed.success){
-//         return NextResponse.json({message: parsed.error.message} , {status: 400});
-//     }
+  if (!parsed.success) {
+    return NextResponse.json(
+      { message: parsed.error, data: null },
+      { status: 400 }
+    );
+  }
 
-//     const newLead  = parsed.data;
+  if (isUpdate && parsed.data.userId !== userId) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
+  }
 
-//     //Create a new lead magnet in our database using prisma
-//     const newLeadMagnet = await prismadb.leadMagnet.create({
-//         data: {...newLead, userId},
-//     });
+  const data = {
+    ...parsed.data,
+    userId: userId,
+  };
 
-//     // Return the new lead magnet tot he user
-//     return NextResponse.json(
-//         {
-//             message: "Successfully created new Lead Magnet",
-//             data: newLeadMagnet,
-//             succcess: true,
-//         },
-//         {status: 201}
-//     );
-//     } catch(error){
-//         return NextResponse.json(
-//             {
-//                 message: "Successfully created Lead magnet",
-//                 data: null,
-//                 success: true,
-//             },
-//             {status: 500}
-//         );
-//     }
-    
-//     return NextResponse.json({message: "Hello World"});
-// }
+  const updatedLeadMagnet = isUpdate
+    ? await prismadb.leadMagnet.update({ where: { id: data.id }, data })
+    : await prismadb.leadMagnet.create({ data });
 
-// export async function PUT(request: Request){
-//     try{
-//     //Grab our authentication state from clerk
-//     // const user = await currentUser();
+  return NextResponse.json(
+    {
+      message: "Successfully handle lead magnet change",
+      data: updatedLeadMagnet,
+    },
+    { status: isUpdate ? 200 : 201 }
+  );
+}
 
-//     // console.log("user",user);
-//     // if(!user?.id){
-//     //     return NextResponse.json({message: "Unauthenticated"} , {status: 401});
-//     // }
+export const POST = (request: Request) =>
+  handleRequest(request, leadMagnetCreateRequest);
+export const PUT = (request: Request) =>
+  handleRequest(request, leadMagnetUpdateRequest, true);
 
-//     const userId = "user_2bueuBH9aFjQhEvfDNTNozK6f5h";
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
 
-//     // Parsing and validating our data
-//     const requestData = await request.json();
-//     const parsed = leadMagnetUpdateRequest.safeParse(requestData);
+  if (!id) {
+    return NextResponse.json(
+      { message: "No id is provided", success: false },
+      { status: 400 }
+    );
+  }
 
-//     if(!parsed.success){
-//         return NextResponse.json({message: parsed.error.message} , {status: 400});
-//     }
+  const leadMagnet = await prismadb.leadMagnet.findFirst({
+    where: { id },
+  });
 
-//     const leadMagnetToUpdate  = parsed.data;
+  if (!leadMagnet) {
+    return NextResponse.json(
+      { message: "Lead magnet  not found", success: false },
+      { status: 404 }
+    );
+  }
 
-//     if(leadMagnetToUpdate.userId !== userId){
-//         return NextResponse.json({message: "Unauthorized"}, {status: 403});
-//     }
+  const user = await currentUser();
 
-//     //Create a new lead magnet in our database using prisma
-//     const updatedLeadMagnet = await prismadb.leadMagnet.update({
-//         where: {id: leadMagnetToUpdate.id},
-//         data: leadMagnetToUpdate,
-//     });
+  if (!user || !user.id) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
 
-//     // Return the new lead magnet tot he user
-//     return NextResponse.json(
-//         {
-//             message: "Successfully updated Lead Magnet",
-//             data: updatedLeadMagnet,
-//             succcess: true,
-//         },
-//         {status: 201}
-//     );
-//     } catch(error){
-//         return NextResponse.json(
-//             {
-//                 message: "Successfully created Lead magnet",
-//                 data: null,
-//                 success: true,
-//             },
-//             {status: 500}
-//         );
-//     }
-    
-//     return NextResponse.json({message: "Hello World"});
-// }
+  if(leadMagnet.userId !== user.id){
+    return NextResponse.json({status: "Unauthorized"} , {status: 403});
+  }
 
-// 2:34:38
+  await prismadb.leadMagnet.delete({ where: { id } });
+
+  return NextResponse.json(
+    {
+      message: "Successfully deleted lead magnet",
+      success: true,
+    },
+    { status: 202 }
+  );
+}
