@@ -26,6 +26,7 @@ function LeadMagnetEditorNavbar() {
     try {
       await save();
       toast.success("Saved!");
+      setEditing(false);
     } catch (error) {
       console.log(error);
       toast.error("Error saving name. Pleaser try again");
@@ -80,6 +81,7 @@ function LeadMagnetEditorNavbar() {
     try{
       await remove();
       toast.success("Deleted!");
+      router.push("/lead-magnets");
     }catch(error){
       console.log(error);
       toast.error("Error Deleting. Please try again");
