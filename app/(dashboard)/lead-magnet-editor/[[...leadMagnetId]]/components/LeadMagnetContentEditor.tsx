@@ -14,6 +14,7 @@ import CodeBlock from "@tiptap/extension-code-block";
 import OrderedList from "@tiptap/extension-ordered-list";
 import History from "@tiptap/extension-history";
 import LeadMagnetContentPreview from "./LeadMagnetContentPreview";
+import { Button } from "@/components/ui/button";
 
 function LeadMagnetContentEditor() {
   const { edittedLeadMagnet, setEdittedLeadMagnet } =
@@ -100,6 +101,71 @@ function LeadMagnetContentEditor() {
           <label className="mb-2 block text-sm font-bold text-gray-700">
             Body
           </label>
+          {editor && (
+            <div className="flex flex-row items-center mb-4 space-x-2 border border-gray-300 rounded-md p-2">
+              <button
+                onClick={() =>
+                  editor.chain().focus().toggleHeading({ level: 1 }).run()
+                }
+                className={
+                  editor.isActive("heading", { level: 1 }) ? "is-active" : ""
+                }
+              >
+                h1
+              </button>
+              <button
+                onClick={() =>
+                  editor.chain().focus().toggleHeading({ level: 2 }).run()
+                }
+                className={
+                  editor.isActive("heading", { level: 2 }) ? "is-active" : ""
+                }
+              >
+                h2
+              </button>
+              <button
+                onClick={() =>
+                  editor.chain().focus().toggleHeading({ level: 3 }).run()
+                }
+                className={
+                  editor.isActive("heading", { level: 3 }) ? "is-active" : ""
+                }
+              >
+                h3
+              </button>
+              <button
+                onClick={() => editor.chain().focus().setParagraph().run()}
+                className={editor.isActive("paragraph") ? "is-active" : ""}
+              >
+                paragraph
+              </button>
+              <button
+                onClick={() => editor.chain().focus().toggleBold().run()}
+                className={editor.isActive("bold") ? "is-active" : ""}
+              >
+                bold
+              </button>
+              <button
+                onClick={() => editor.chain().focus().toggleItalic().run()}
+                className={editor.isActive("italic") ? "is-active" : ""}
+              >
+                italic
+              </button>
+              <button
+                onClick={() => editor.chain().focus().toggleBulletList().run()}
+                className={editor.isActive("bulletList") ? "is-active" : ""}
+              >
+                bullet list
+              </button>
+              <button
+                onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                className={editor.isActive("orderedList") ? "is-active" : ""}
+              >
+                ordered list
+              </button>
+              {/* <Button>Create menu toggle buttons</Button> */}
+            </div>
+          )}
           {editor && (
             <EditorContent
               className="h-[50vh] w-full appearance-none overflow-y-scroll rounded border px-3 py-2 leading-tight text-gray-700 shadow outline-none focus:outline-none"
