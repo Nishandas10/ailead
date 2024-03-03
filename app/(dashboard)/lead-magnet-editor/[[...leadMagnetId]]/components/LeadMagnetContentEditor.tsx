@@ -14,7 +14,7 @@ import CodeBlock from "@tiptap/extension-code-block";
 import OrderedList from "@tiptap/extension-ordered-list";
 import History from "@tiptap/extension-history";
 import LeadMagnetContentPreview from "./LeadMagnetContentPreview";
-import { Button } from "@/components/ui/button";
+import { MenuButton } from "@/components/ui/menubutton";
 
 function LeadMagnetContentEditor() {
   const { edittedLeadMagnet, setEdittedLeadMagnet } =
@@ -103,66 +103,72 @@ function LeadMagnetContentEditor() {
           </label>
           {editor && (
             <div className="flex flex-row items-center mb-4 space-x-2 border border-gray-300 rounded-md p-2">
-              <button
+              <MenuButton
                 onClick={() =>
                   editor.chain().focus().toggleHeading({ level: 1 }).run()
                 }
-                className={
-                  editor.isActive("heading", { level: 1 }) ? "is-active" : ""
+                variant={
+                  editor.isActive("heading", { level: 1 })
+                    ? "toggle"
+                    : "default"
                 }
               >
                 h1
-              </button>
-              <button
+              </MenuButton>
+              <MenuButton
                 onClick={() =>
                   editor.chain().focus().toggleHeading({ level: 2 }).run()
                 }
-                className={
-                  editor.isActive("heading", { level: 2 }) ? "is-active" : ""
+                variant={
+                  editor.isActive("heading", { level: 2 })
+                    ? "toggle"
+                    : "default"
                 }
               >
                 h2
-              </button>
-              <button
+              </MenuButton>
+              <MenuButton
                 onClick={() =>
                   editor.chain().focus().toggleHeading({ level: 3 }).run()
                 }
-                className={
-                  editor.isActive("heading", { level: 3 }) ? "is-active" : ""
+                variant={
+                  editor.isActive("heading", { level: 3 })
+                    ? "toggle"
+                    : "default"
                 }
               >
                 h3
-              </button>
-              <button
+              </MenuButton>
+              <MenuButton
                 onClick={() => editor.chain().focus().setParagraph().run()}
-                className={editor.isActive("paragraph") ? "is-active" : ""}
+                variant={editor.isActive("paragraph") ? "toggle" : "default"}
               >
                 paragraph
-              </button>
-              <button
+              </MenuButton>
+              <MenuButton
                 onClick={() => editor.chain().focus().toggleBold().run()}
-                className={editor.isActive("bold") ? "is-active" : ""}
+                variant={editor.isActive("bold") ? "toggle" : "default"}
               >
                 bold
-              </button>
-              <button
+              </MenuButton>
+              <MenuButton
                 onClick={() => editor.chain().focus().toggleItalic().run()}
-                className={editor.isActive("italic") ? "is-active" : ""}
+                variant={editor.isActive("italic") ? "toggle" : "default"}
               >
                 italic
-              </button>
-              <button
+              </MenuButton>
+              <MenuButton
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
-                className={editor.isActive("bulletList") ? "is-active" : ""}
+                variant={editor.isActive("bulletList") ? "toggle" : "default"}
               >
                 bullet list
-              </button>
-              <button
+              </MenuButton>
+              <MenuButton
                 onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                className={editor.isActive("orderedList") ? "is-active" : ""}
+                variant={editor.isActive("orderedList") ? "toggle" : "default"}
               >
                 ordered list
-              </button>
+              </MenuButton>
               {/* <Button>Create menu toggle buttons</Button> */}
             </div>
           )}
@@ -189,3 +195,6 @@ function LeadMagnetContentEditor() {
 
 export default LeadMagnetContentEditor;
 //3:37:54
+{
+  /* <Button>Create menu toggle buttons</Button> */
+}
