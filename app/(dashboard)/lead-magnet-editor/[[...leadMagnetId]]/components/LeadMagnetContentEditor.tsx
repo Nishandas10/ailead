@@ -1,3 +1,4 @@
+"use client";
 import { Input } from "@/components/ui/input";
 import { useLeadMagnetEditorContext } from "@/context/LeadMagnetEditorContext";
 import React, { useEffect } from "react";
@@ -102,7 +103,7 @@ function LeadMagnetContentEditor() {
             Body
           </label>
           {editor && (
-            <div className="flex flex-row items-center mb-4 space-x-2 border border-gray-300 rounded-md p-2">
+            <div className="flex flex-row items-center mb-4 space-x-2 rounded-md p-2">
               <MenuButton
                 onClick={() =>
                   editor.chain().focus().toggleHeading({ level: 1 }).run()
@@ -194,7 +195,3 @@ function LeadMagnetContentEditor() {
 }
 
 export default LeadMagnetContentEditor;
-//3:37:54
-{
-  /* <Button>Create menu toggle buttons</Button> */
-}
